@@ -20,7 +20,14 @@
                 <img :src="logo" alt="">
             </div>
             <div class="input-box">
-                <span class="login-title">公路云业主端账号登录</span>
+                <span class="login-title">公路云{{clientInfo}}账号登录</span>
+                <div class="notification_content" >
+                    <div class="notification_box" v-show="ifNotice">
+                    <img class="notice-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAABGRJREFUSA2VVj1oXEcQntl3J4WAi3AhChYhqIlrdWqEScC9wG4sgouADS7SOD+2xMmESOTyQ6p0gbgwQWksUOfCuDBqBClUqzIkkVKpDME+6W2+b2bn3dPpEsUr7c3u/H0z8+btW5X/MfLavXmp8xLmoojOwuRiMTsUyQeSdAdzW9e/3jvPnf6XQu6vXJNcb0Dnkull/NKCdNJQ2RdNfd0YPJokJm8iYF7vz8mL4SYcL7QBxvFUVXLOQjo2dmW6s6xrG8/H+GcB85crl+VYtqDYgzeEBGekrzz0SLpyVe8PnrVNT4XmYPkJQLptpViP40csZxMsFipDSXKlDZoaZyxjRmZV6mYmxVASSlYo11phU+lTfX36XX3twpuS0k/Go07oBaWtIEfRLXtEBagBBMQmHniPhpqSzVibs3Bayad674vfdHX1SC70PkYGJwzGZoAVXfrB6JnvNmD+qn8N+wUY+zMjxfTsnDaZdtNfxVb0zp2/EVkLMIBBWefwp7JQMIxFjxtNlBEtS8gIC7U1ndSdmQDMg8EbyH6KwURAQc/4U2BgdPJgbR7q9p6xF60RwiMpnMWw9s91Ayjp+C0q8I8j40+RAykHuQygSC8Rq4M0lkRrVzBEKLi+l4RrlobD5HkEqC/fLt5M7AHBPtoW+rZs/KWljqS8GHsqWpTFINZNxMbXFmA1I6luMnJU+20CCB/OzYsdvAazmj1Df88AWiKwACxKL4oVR9uAKC+CCKnJvQwNalsK5ixKyoPYTUpiXgaagG3lLR4toCStDNOMZ1/sYcKnWNQb6FYFL6Kk1HKVOBdJbVgEluJo284Q4CP3xcSJ65d1BMDw8YbLIfGsmyp0GNYKymkZFmph85WRVtMklBe8sD+Pol/+ZJceqOb3GAzz8sbhbrSOrjN5SnP5h/UPcGj9Li9ra7iQu1X71wKkp2AesKQ7Oev75LCC3jghb6lS7mxqPcUXBZmhoMXGRRYSlqQT/e0kqWRb7TTx0nB9XmlCHrph76cSImDpJ82qu5309v09ZLnP5qFhUF8jg5ahO06PdWr6HU44fUweOsEm0+Xa0mbq+Pc1qezr7ZU9inHAVX2POrIjdbCg5pgOOt1bevPuH5xc0y4A/FMFO3zGOM22UGIQygD15uojdOWuZwcWuZg0COrApk67ZvgBjy1FRT8CiAwR7C4xaNThj43pqWUdDn/FO9hDfMbyBkKk3gOli49/zD9/c8sUXmCNQyq6dFyfVYH0SKa6y6bPXSxI84NvL0s+eYLTo1wxTnedqwdvfOe9SYclPjjXIWp7RT/6/FngnAI00IcArU+2YIUv9elhBzHc+HEGWWA3CHBX3itU90hSdVVvjMDo7Qwgmfnhd3MA3YTjBe5j8BEVf4VF80ClrFwZs6AfqmW98dnzsA06ETCEeFa4CMsGHPlFOAT/QvEscRGWvn5499UuwuP+8i/fz8vJEB/qtCh1PYv3z6/6dT7Eze0At/MdwUut1z8596r/D8aUc/TWyHjBAAAAAElFTkSuQmCC" alt="">
+                    <span class="notice-text">{{noticeInfoText}}</span>
+                    <i class="el-icon-close" @click="closeNotice"></i>
+                    </div>
+                </div>
                 <div class="input-wrap" :class="{'input-wrap-focus':focus1}">
                     <input type="text" v-model="userName" class="input-item username" @focus="usernameFocus" @blur="usernameBlur" placeholder="用户名/手机号/邮箱">
                 </div>
@@ -71,7 +78,9 @@
             userName:"",
             userPWD:"",
             rememberMeChecked:false,
-            forgetPWDShow:false
+            forgetPWDShow:false,
+            ifNotice:false,
+            noticeInfoText:""
         }
     },
     created() {
@@ -91,6 +100,9 @@
         }
     },
     methods: {
+        closeNotice(){
+            this.ifNotice=false
+        },
         usernameFocus(){
             this.focus1=true
         },
@@ -105,9 +117,16 @@
         },
         // 登录
         goLogin(){
+            //判断是否登陆中 避免重复点击
+            if(this.loginStatus){
+                return
+            }
             console.log("login")
             //   判断用户名和密码是否为空
             if(this.userName&&this.userPWD){
+                // 设置登录状态 和 按钮文字  避免重复点击
+                this.btnText="登陆中..."
+                this.loginStatus=true
                 var myreg=/^[1][3,4,5,7,8][0-9]{9}$/;
 				var mailreg = /^([a-zA-Z0-9]+[-_\.]?)+@[a-zA-Z0-9]+\.[a-z]+$/;
 				var localurl = "http://192.168.2.32:8080";
@@ -137,7 +156,7 @@
                  */
                 // 获取apptoken
                 axios.post(
-                    localurl+"/ierp/api/getAppToken.do",
+                    serverurl+"/ierp/api/getAppToken.do",
                     getAppTokenData,
                     // {headers:{"Content-Type":"application/json"}}
                     ).then(
@@ -159,7 +178,7 @@
                                     usertype:type
                                 }
                             // 获取accessToken
-                            axios.post(localurl+"/ierp/api/login.do",sendData).then(
+                            axios.post(serverurl+"/ierp/api/login.do",sendData).then(
                                 res=>{
                                     console.log("access_token res>>>",res)
                                     if("success"===res.data.state){
@@ -171,49 +190,76 @@
                                             password:this.userPWD,
                                             usertype:type
                                         }
-                                        // http://192.168.20.22/ierp/kapi/app/sxzd_login/sxzd_user_login
-                                        axios.post(serverurl+"/ierp/kapi/app/sxzd_login/sxzd_user_login",JSON.stringify(sendData),
-                                            {headers:{"access_token":access_token}}).then(
+                                        axios.post(serverurl+"/ierp/kapi/app/sxzd_login/sxzd_user_login",sendData,
+                                            {headers:{"Content-Type":"application/json","access_token":access_token}}).then(
                                             res=>{
                                                 console.log("login res>>>",res)
-                                                if(res.success){
+                                                if(res.data.success===true){
                                                     //登录成功后拼接url 跳转
                                                     var url = localurl+ "/ierp/accessTokenLogin.do?access_token="+access_token+"&redirect="+localurl+"/ierp/index.html?formId=pc_main_console#/dform?formId=pc_main_console"
                                                     this.setUserInfo()  //设置是否记住密码 储存登录信息
                                                     window.location.href = url;  //跳转
+                                                }else if(res.data.success===false){
+                                                    // alert(res.data.message)
+                                                    this.setNoticeInfo(res.data.message)
+                                                    this.btnText="登陆"
+                                                    this.loginStatus=false
                                                 }else{
-                                                    alert(res.message)
+                                                    // alert("登录失败，请重试...")
+                                                    this.setNoticeInfo("登录失败，请重试...")
+                                                    this.btnText="登陆"
+                                                    this.loginStatus=false
                                                 }
                                             },
                                             err=>{
                                                 console.log("login err>>>",err)
-                                                alert("网络错误，请稍后重试...")
+                                                this.setNoticeInfo("网络错误，请稍后重试...")
+                                                this.btnText="登陆"
+                                                this.loginStatus=false
                                             }
                                         )
                                         
                                     }else{
-                                        alert(res.data.errorMsg)
+                                        // alert(res.data.errorMsg)
+                                        this.setNoticeInfo(res.data.errorMsg)
+                                        this.btnText="登陆"
+                                        this.loginStatus=false
                                     }
                                 },
                                 err=>{
                                     console.log("login err>>>",err)
-                                    alert("网络错误，请稍后重试...")
+                                    this.setNoticeInfo("网络错误，请稍后重试...")
+                                    this.btnText="登陆"
+                                    this.loginStatus=false
                                 }
                             )
 
                         }else{
-                            alert(res.data.errorMsg)
+                            // alert(res.data.errorMsg)
+                            this.setNoticeInfo(res.data.errorMsg)
+                            this.btnText="登陆"
+                            this.loginStatus=false
                         }
                     },
                     err=>{
                         console.log("getAppToken err>>>",err)
-                        alert("网络错误，请稍后重试...")
+                        this.setNoticeInfo("网络错误，请稍后重试...")
+                        this.btnText="登陆"
+                        this.loginStatus=false
                     }
                 )
             }else{
-                alert("用户名或密码不能为空")
+                this.setNoticeInfo("用户名或密码不能为空")
                 return 
             }
+        },
+        setNoticeInfo(info){
+            this.ifNotice=true;
+            this.noticeInfoText=info
+            setTimeout(()=>{
+                this.ifNotice=false
+                this.noticeInfoText=""
+            },5000)
         },
         //   记住我
         rememberMe(){
@@ -332,8 +378,42 @@
                     font-size: 18px;
                     color: #333333;
                     line-height: 30px;
-                    margin-bottom: 80px;
+                    margin-bottom: 20px;
 
+                }
+
+                .notification_content{
+                    width: 300px;
+                    height: 45px;
+                }
+
+                .notification_box{
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    width: 300px;
+                    height: 45px;
+                    background-color:#ffe7e4;
+                    color: #fd6c6a;
+                    border-radius: 10px;
+                    margin-bottom: 20px;
+
+                    .notice-img{
+                        margin: 0 10px;
+                        width: 28px;
+                        height: 28px;
+                    }
+
+                    .notice-text{
+                        font-size: 14px;
+                        flex-grow: 1
+                    }
+
+                    .el-icon-close{
+                        font-size: 18px;
+                        cursor: pointer;
+                        margin-right: 10px;
+                    }
                 }
 
                 .input-wrap{

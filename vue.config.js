@@ -108,7 +108,8 @@ module.exports = {
     port: 8080,
     https: false,
     hotOnly: false, // See https://github.com/vuejs/vue-cli/blob/dev/docs/cli-service.md#configuring-proxy
-    proxy: null // 设置代理
+    // proxy: "http://192.168.20.22", // 设置代理
+    // prot:"80"
     // before: app => {}
   },
   // 第三方插件配置
