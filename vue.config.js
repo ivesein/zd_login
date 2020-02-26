@@ -44,9 +44,9 @@ module.exports = {
           uglifyOptions: {
             warnings: true,
             compress: {
-              drop_console: false,
+              drop_console: true,
               drop_debugger: true,
-              // pure_funcs: ["console.log"] //移除console
+              pure_funcs: ["console.log"] //移除console
             }
           },
           sourceMap: false,
